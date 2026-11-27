@@ -51,11 +51,11 @@
 
   /* Product hues: each product and framework the family names has one color, the same on every
      site. A site's --accent is its own product's hue; a word naming another product takes that
-     product's token. Effect borrows Frond's green until it gets a hue of its own. */
+     product's token. Effect is magenta, a hue no other role or code token holds. */
   --pinna: #c8f26b;
   --frond: var(--green);
   --react: var(--cyan);
-  --effect: var(--green);
+  --effect: #ff7ad9;
 
   /* Channel triplets for translucent tints: rgb(var(--accent-rgb) / 0.3) */
   --accent-rgb: 200 242 107;
@@ -427,7 +427,7 @@ html {
 /* The lit word is drawn as a vector display's beam draws a line: a hot core, a tight halo in the
    word's own hue, and a faint bloom, so it reads as a lit stroke rather than a soft blur. Under it
    runs an edge of the hero graph: a lit line between two filled nodes. Every color comes from
-   currentColor, so the Effect page's green word takes the same light. The hero headline, the
+   currentColor, so the Effect page's magenta word takes the same light. The hero headline, the
    Effect page's, and the 404 page's each light one word. */
 .lit-word {
   --edge-node: max(3px, 0.035em);
@@ -467,7 +467,7 @@ html {
   transition-duration: var(--duration-control);
 }
 
-/* The lit color sits in :where(), so a word that names another product, such as Effect in green,
+/* The lit color sits in :where(), so a word that names another product, such as Effect in magenta,
    keeps its own color whichever stylesheet loads first. */
 :where(.lit-word) {
   color: var(--accent);

@@ -52,8 +52,8 @@ that are still literals are listed after the alpha table.
   `--green`. The `-rgb` triplets (`--accent-rgb` and the rest)
   exist for tints that take an alpha.
 - **Product hues:** `--pinna` lime, `--frond` green, `--react` cyan, and
-  `--effect`, which borrows Frond's green until Effect gets a hue of its
-  own. A site's `--accent` is its own product's hue; a word naming another
+  `--effect` magenta (`#ff7ad9`), a hue no other role or code token
+  holds. A site's `--accent` is its own product's hue; a word naming another
   product takes `.hue-pinna`, `.hue-frond`, `.hue-react`, or `.hue-effect`,
   so each product reads in one color on every site.
 - **Layout:** `--shell-max` 1320px, `--shell-gutter` 24px (20px under
@@ -96,7 +96,7 @@ These tints are still literals, each at one or two places:
 | The graticule's plus marks | White at 0.04 | Inside a data URI, which cannot read a token |
 | The vignette | Black at 0.38 | |
 | The grid lit under the pointer | Lit lines at 0.035 | |
-| The Effect code panel's corner dots | `--green` at half strength, full under the pointer | |
+| The Effect code panel's corner dots | `--effect` at half strength, full under the pointer | |
 | The corner dots of the benchmark disclaimer and a docs "Avoid" panel | `--red` at half strength, full under the pointer | |
 
 Three surfaces are mixed from the others: `--code-surface`, the code bars'
@@ -372,7 +372,7 @@ only a live state, a failure, or identity.
   it.
 - **The lit word stands on an edge.** One word of a headline is lit
   (`.lit-word`, in `design-system.css`): "hard" in the hero, "Effect" on
-  the Effect page in green, and "read" on the 404 page. Its glow is a
+  the Effect page in magenta, and "read" on the 404 page. Its glow is a
   beam's, a white core 1px wide at 0.3, a 3px halo in the word's color at
   40%, and a 16px bloom at 12%, so it reads as a lit stroke and not a soft
   blur. Under it runs an edge of the hero graph: a 1px line in the word's
@@ -383,7 +383,7 @@ only a live state, a failure, or identity.
   nothing else moves. The hero's headline passes clicks through to the
   graph behind it, and the lit word takes the pointer so its edge can
   light. Every color is `currentColor`, and the lit color sits in
-  `:where()`, so the Effect word keeps its green whichever stylesheet
+  `:where()`, so the Effect word keeps its magenta whichever stylesheet
   loads first. A misconverged beam, an outlined word, a frame, a reticle,
   a traced branch, and a line drawn on load were rendered and dropped for
   this still edge.
