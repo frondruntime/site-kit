@@ -1,0 +1,12 @@
+---
+interface Props {
+  readonly class?: string;
+  readonly href?: string;
+}
+
+const { class: className = "", href = "/" } = Astro.props;
+---
+
+<a class={`brand ${className}`.trim()} href={href} aria-label="Fixture">
+  <span class="brand-name">Fixture</span>
+</a>

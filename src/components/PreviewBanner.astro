@@ -1,0 +1,14 @@
+---
+/** The strip above a docs page that says what stage the product is at. */
+interface Props {
+  label: string;
+  detail: string;
+}
+
+const { label, detail } = Astro.props;
+---
+
+<div class="preview-banner">
+  <span class="preview-banner-label">{label}</span>
+  <span class="preview-banner-detail">{detail}</span>
+</div>

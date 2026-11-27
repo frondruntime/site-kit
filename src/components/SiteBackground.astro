@@ -1,0 +1,56 @@
+---
+// The persist id is named: a generated one is numbered per layout, so the docs and the landing
+// would not match and every swap between them would put in a new background.
+---
+
+<div class="site-background" aria-hidden="true" transition:persist="site-background">
+  <div class="site-background-grid"></div>
+  <div class="site-background-pointer">
+    <div class="site-background-lens"><div></div></div>
+  </div>
+</div>
+
+<script>
+  // Moves the lit lens to the pointer. Every write is a transform, so nothing is painted again
+  // while the pointer moves, and the light sits on the pointer with no trail. Fine pointers only:
+  // a touch has no hover, so the light would only flash under each tap.
+  const background = document.querySelector<HTMLElement>(".site-background");
+  const lens = background?.querySelector<HTMLElement>(".site-background-lens");
+  const grid = lens?.firstElementChild;
+
+  if (
+    background != null &&
+    lens != null &&
+    grid instanceof HTMLElement &&
+    matchMedia("(hover: hover) and (pointer: fine)").matches
+  ) {
+    const radius = lens.offsetWidth / 2;
+    let x = 0;
+    let y = 0;
+    let frame = 0;
+
+    const write = () => {
+      frame = 0;
+      lens.style.transform = `translate(${x - radius}px, ${y - radius}px)`;
+      grid.style.transform = `translate(${radius - x}px, ${radius - y}px)`;
+    };
+
+    addEventListener(
+      "pointermove",
+      (event) => {
+        // Whole pixels, so the counter-moved grid lands on the page's pixels and its lines stay sharp.
+        x = Math.round(event.clientX);
+        y = Math.round(event.clientY);
+        background.dataset.pointer = "on";
+        if (frame === 0) {
+          frame = requestAnimationFrame(write);
+        }
+      },
+      { passive: true },
+    );
+
+    document.documentElement.addEventListener("pointerleave", () => {
+      delete background.dataset.pointer;
+    });
+  }
+</script>

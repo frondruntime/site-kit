@@ -1,0 +1,5 @@
+/* The fixture's own tokens: footer art, to check a site stylesheet reaches every page. */
+:root {
+  --footer-art: linear-gradient(var(--accent) 0 0);
+  --footer-art-size: 1px 28px;
+}

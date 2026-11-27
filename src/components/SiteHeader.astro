@@ -1,0 +1,45 @@
+---
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import type { HeaderLink } from "../types";
+
+interface Props {
+  /** The site's brand component: its mark and name, linking home. */
+  brand: AstroComponentFactory;
+  links: ReadonlyArray<HeaderLink>;
+  /** The `id` of the link to mark as the current page. */
+  current?: string;
+  showMenuToggle?: boolean;
+}
+
+const { brand: Brand, links, current, showMenuToggle = false } = Astro.props;
+---
+
+<header class="site-header">
+  <nav class="nav-row">
+    <div class="nav-start">
+      {showMenuToggle && (
+        <button type="button" class="menu-toggle" aria-label="Toggle navigation" aria-controls="docs-sidebar" aria-expanded="false">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="2" y1="4" x2="14" y2="4" />
+            <line x1="2" y1="8" x2="14" y2="8" />
+            <line x1="2" y1="12" x2="14" y2="12" />
+          </svg>
+        </button>
+      )}
+      <Brand />
+    </div>
+    <div class="nav-actions">
+      {links.map((link) => (
+        <a
+          class={`nav-link-action${current === link.id ? " is-current" : ""}`}
+          href={link.href}
+          target={link.newTab ? "_blank" : undefined}
+          rel={link.newTab ? "noopener noreferrer" : undefined}
+          aria-current={current === link.id ? "page" : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>

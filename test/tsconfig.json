@@ -1,0 +1,7 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["bun", "astro/client"]
+  },
+  "include": [".", "../src/**/*.ts", "../fixture/.astro/types.d.ts"]
+}
