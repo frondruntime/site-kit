@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import type { Link, Root } from "mdast";
+import type { Definition, Link, Root } from "mdast";
 import { VFile } from "vfile";
 import { remarkDocsLinks } from "../src/plugins/remarkDocsLinks.ts";
 
@@ -33,4 +33,19 @@ test("external links and anchors stay", () => {
 
 test("an absolute docs link fails the build", () => {
   expect(() => rewrite("/docs/state/boxes")).toThrow('links "/docs/state/boxes" absolutely');
+});
+
+test("a reference-style link's definition is rewritten too", () => {
+  const definition: Definition = {
+    type: "definition",
+    identifier: "boxes",
+    url: "../state/boxes.md",
+  };
+  const tree: Root = { type: "root", children: [definition] };
+  const file = new VFile({ path: "/site/src/content/docs/react/hooks.md" });
+  remarkDocsLinks({
+    corpusPath: "docs/public",
+    repositoryBlob: "https://github.com/owner/name/blob/main",
+  })(tree, file);
+  expect(definition.url).toBe("/docs/state/boxes");
 });

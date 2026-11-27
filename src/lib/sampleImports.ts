@@ -27,7 +27,8 @@ export interface SampleImport {
   readonly names: ReadonlyArray<string>;
 }
 
-const declarationPattern = /^import\s+(type\s+)?([^;]*?)\s+from\s+"([^"]+)";/gm;
+// Either quote, so a file formatted with single quotes still shows its imports.
+const declarationPattern = /^import\s+(type\s+)?([^;]*?)\s+from\s+(["'])([^"']+)\3;/gm;
 
 const parseSpecifier = (text: string): Specifier => {
   const type = text.startsWith("type ");
@@ -46,7 +47,7 @@ const parseDeclarations = (source: string): ReadonlyArray<Declaration> =>
       .trim();
     const namespace = /^\*\s+as\s+([\w$]+)$/.exec(outside)?.[1];
     return {
-      from: match[3] ?? "",
+      from: match[4] ?? "",
       typeOnly: match[1] !== undefined,
       defaultName: namespace === undefined && outside !== "" ? outside : undefined,
       namespace,

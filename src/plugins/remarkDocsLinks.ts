@@ -12,7 +12,7 @@
  * contains the pages.
  */
 
-import type { Link, Root } from "mdast";
+import type { Definition, Link, Root } from "mdast";
 import { visit } from "unist-util-visit";
 import type { VFile } from "vfile";
 
@@ -54,7 +54,8 @@ export function remarkDocsLinks({ corpusPath, repositoryBlob }: DocsLinksOptions
     // Where this page sits in the repository, e.g. ["docs", "public", "react"].
     const pageDir = [...corpus, ...slug.split("/").slice(0, -1)];
 
-    visit(tree, "link", (node: Link) => {
+    // A reference-style link's URL lives on its definition, so both node types are rewritten.
+    visit(tree, ["link", "definition"] as const, (node: Link | Definition) => {
       const url = node.url;
 
       if (url.startsWith("/docs/")) {
