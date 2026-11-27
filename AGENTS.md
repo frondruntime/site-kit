@@ -12,8 +12,9 @@ commit. The owner decides; these rules hold until the owner says otherwise.
 2. **No product in the kit.** No product name, URL, copy, brand mark, or footer art in `src`: a site
    passes them in. The exceptions are the landing class names still listed in
    `design-system.css`'s shared recipes, which go when a second landing needs those recipes.
-   The family's product hues are the other exception: `--pinna`, `--frond`, `--react`, `--effect`
-   and their `.hue-*` classes, so a product reads in one color on every site.
+   The family's product hues are the other exception: `--pinna`, `--frond`, `--react`, `--effect`,
+   `--react-hue`, `--effect-hue`, and the `.hue-*` classes, so a product reads in one color on every
+   site.
 3. **Remote state is the owner's call.** Pushing a branch and opening a pull request follow the
    owner's ask in the conversation; merging, tagging, and changing settings each need their own.
    Nothing here is ever published to npm: the package is `private: true`.
