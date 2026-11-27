@@ -1,0 +1,8 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "types": ["astro/client"],
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["src", "fixture/.astro/types.d.ts"]
+}

@@ -1,0 +1,799 @@
+/* ═══════════════════════════════════════════════════════════
+   PINNA DESIGN SYSTEM
+   Shared tokens, reset, base typography, and brand mark.
+   Imported by both the landing (/) and the docs layout.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Tokens ─── */
+:root {
+  color-scheme: dark;
+
+  /* Layout — shared between landing and docs */
+  --shell-max: 1320px;
+  --shell-gutter: 24px;
+  --shell-width: min(var(--shell-max), calc(100% - var(--shell-gutter) * 2));
+  --header-h: 4rem;
+  --grid: 64px; /* page background grid pitch */
+
+  /* Breakpoints. Custom properties cannot drive media queries, so this is a record of the
+     widths the stylesheets query: 24rem, 40rem (phones), 700px, 48rem (tablets), 900px, 64rem,
+     1100px, 78rem. */
+
+  /* Surfaces */
+  --bg: #090d12;
+  --bg-dim: #070b0f;
+  --panel: #10161d;
+
+  /* Text */
+  --ink: #e5eee9;
+  --ink-bright: #f4fbf7;
+  /* Headings set large (the hero, the landing's sections and cards, a page's title): 14.7:1 on
+     --bg. At 2rem and up, --ink-bright's 18.5:1 read as glare beside the text under it. */
+  --display: #d4e3dc;
+  --prose: #c8d8d2;
+  /* The landing's running text, between --prose and --muted: 9.1:1 on --bg. --muted's 6.4:1 read
+     as too dim to read at length under headings three times as bright. */
+  --lede: #a7b4b5;
+  --muted: #89969a;
+  --dim: #526067;
+
+  /* Borders */
+  --line: #1e2830;
+  --line-bright: #26313a;
+  --edge: #394751; /* graph edges on the landing */
+
+  /* Accents */
+  --accent: #c8f26b;
+  --cyan: #3ccfed;
+  --amber: #e2a847;
+  --red: #f07178;
+  --green: #91f29a;
+
+  /* Channel triplets for translucent tints: rgb(var(--accent-rgb) / 0.3) */
+  --accent-rgb: 200 242 107;
+  --cyan-rgb: 60 207 237;
+  --red-rgb: 240 113 120;
+  --panel-rgb: 16 22 29;
+  --bg-dim-rgb: 7 11 15;
+  --white-rgb: 255 255 255;
+
+  /* Beam frames: a 1px lit outline whose corners are lit 3px squares, like the brand mark's.
+     Lay it over a frame's own fill: background: var(--beam-corners); background-color: … */
+  --beam-corners:
+    linear-gradient(var(--accent) 0 0) left top / 3px 3px no-repeat border-box,
+    linear-gradient(var(--accent) 0 0) right top / 3px 3px no-repeat border-box,
+    linear-gradient(var(--accent) 0 0) left bottom / 3px 3px no-repeat border-box,
+    linear-gradient(var(--accent) 0 0) right bottom / 3px 3px no-repeat border-box;
+
+  /* Lit tints: the accent at the few alphas the system uses. A beam frame's line is
+     --lit-line, brightening to --lit-line-hover; a frame that marks a state rather than
+     inviting a click takes --lit-line-soft. */
+  --lit-hairline: rgb(var(--accent-rgb) / 0.28);
+  /* A link at rest: the accent mixed into --ink, so a link reads as one at a glance, brighter than
+     the text around it, and still steps up to --accent under the pointer. Its underline rests at
+     0.5, where --lit-hairline's 0.28 read as no underline on --bg. */
+  --link: color-mix(in oklab, var(--accent) 40%, var(--ink));
+  --link-underline: rgb(var(--accent-rgb) / 0.5);
+  --lit-line-soft: rgb(var(--accent-rgb) / 0.6);
+  --lit-line: rgb(var(--accent-rgb) / 0.7);
+  --lit-line-hover: rgb(var(--accent-rgb) / 0.9);
+  --lit-fill: rgb(var(--accent-rgb) / 0.06);
+  --lit-fill-hover: rgb(var(--accent-rgb) / 0.12);
+  --lit-trace: rgb(var(--accent-rgb) / 0.45); /* a section's rule where it leaves its pad */
+  --lit-panel-line: color-mix(
+    in srgb,
+    var(--accent) 30%,
+    transparent
+  ); /* a lit code panel's frame */
+
+  /* Mixed surfaces */
+  --code-surface: color-mix(in srgb, var(--bg-dim) 82%, var(--bg)); /* code panels' bars */
+  --panel-subtle: color-mix(in srgb, var(--panel) 50%, var(--bg)); /* quiet insets */
+  --shade: rgb(0 0 0 / 0.5); /* behind the drawer, under the hero's dock */
+
+  /* Motion. Controls answer in --duration-control; the docs drawer slides in
+     --duration-drawer; the hero graph eases a state change in --duration-graph and enters in
+     --duration-enter. */
+  --duration-control: 0.12s;
+  --duration-drawer: 0.2s;
+  --duration-graph: 0.3s;
+  --duration-enter: 0.4s;
+  /* A lit control fades like phosphor: it lights in --duration-control and decays in
+     --duration-decay. --duration-beam is the one a transition names; it holds the decay at rest
+     and the control's speed under the pointer or focus (see "Beam timing" below). */
+  --duration-decay: 0.6s;
+  /* A copy's lit segment runs along the code panel's seam in this (docs.css, `.code-header`). */
+  --duration-sweep: 0.44s;
+  --duration-beam: var(--duration-decay);
+  /* An underlined link answers faster than a control, since a page carries dozens and the pointer
+     crosses them on the way elsewhere: it lights in --duration-link and fades in
+     --duration-link-decay. */
+  --duration-link: 0.08s;
+  --duration-link-decay: 0.3s;
+  /* A current link holds a glow that persists after it, as phosphor does: the glow rises in
+     --duration-glow-rise and fades in --duration-glow-decay on --ease-decay, which falls fast and
+     then lingers, so a section the reader scrolled past stays faintly lit for a moment. */
+  --duration-glow-rise: 0.22s;
+  --duration-glow-decay: 0.9s;
+  --ease-decay: linear(
+    0,
+    0.39 10%,
+    0.63 20%,
+    0.78 30%,
+    0.86 40%,
+    0.92 50%,
+    0.95 60%,
+    0.97 70%,
+    0.985 80%,
+    0.995 90%,
+    1
+  );
+
+  /* Bloom: the halo a vector display's beam leaves around a bright line. The primary action's
+     beam frame blooms under the pointer or focus. */
+  --bloom-frame:
+    0 0 14px rgb(var(--accent-rgb) / 0.16), inset 0 0 10px rgb(var(--accent-rgb) / 0.06);
+
+  /* Corner dots: the 3px squares a panel's frame carries at its corners, as a beam frame does.
+     A panel sets --corner to its own frame's hue and --corner-inset to where its frame lies. */
+  --corner-size: 3px;
+
+  /* The graticule: a plus at every intersection of the background grid, as on an oscilloscope's
+     screen, 2px from the center on each side. A data URI cannot read a custom property, so its
+     white at 0.04 is written in it. */
+  --graticule: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cpath d='M0 .5h3M61 .5h3M.5 0v3M.5 61v3' stroke='%23fff' stroke-opacity='.04'/%3E%3C/svg%3E");
+
+  /* A # drawn as a piece of the hero graph, the glyph of a link to a section: two edges each way at
+     0.6 that cross at four filled nodes. --hash is 13px with 3px nodes, beside a docs heading, drawn
+     to whole pixels. --hash-small is 9px with 2px nodes, beside a landing section's 0.68rem id; a
+     2px node centered on a 1px edge sits on half pixels, which are whole device pixels on a screen
+     of two or more. Neither is scaled. */
+  --hash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Cpath fill-opacity='.6' d='M3 0h1v13H3zM9 0h1v13H9zM0 3h13v1H0zM0 9h13v1H0z'/%3E%3Cpath d='M2 2h3v3H2zM8 2h3v3H8zM2 8h3v3H2zM8 8h3v3H8z'/%3E%3C/svg%3E");
+  --hash-small: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath fill-opacity='.6' d='M1.5 0h1v9h-1zM6.5 0h1v9h-1zM0 1.5h9v1H0zM0 6.5h9v1H0z'/%3E%3Cpath d='M1 1h2v2H1zM6 1h2v2H6zM1 6h2v2H1zM6 6h2v2H6z'/%3E%3C/svg%3E");
+
+  /* A leaflet, the bullet of a docs list: a filled pointed oval tipped up and to the right, drawn
+     as a mask so it takes the lit color. At 6px it reads as a dot; the points show up close. */
+  --leaflet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M.5 9.5C.5 4 4 .5 9.5 .5C9.5 6 6 9.5 .5 9.5Z'/%3E%3C/svg%3E");
+
+  /* Typography */
+  --font-mono: var(--font-plex-mono);
+}
+
+/* ─── Reset ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+/* The page is not captured in a view transition: only the docs content (`docs-content`) fades,
+   and the rest, background included, renders live and cuts. A captured page is shown as a
+   snapshot for the length of that fade, and Safari draws the snapshot's background differently
+   from the live one, so the background switched on every navigation. */
+html {
+  view-transition-name: none;
+  accent-color: var(--accent);
+  caret-color: var(--accent);
+  scrollbar-color: var(--line-bright) var(--bg);
+}
+
+::selection {
+  background: var(--lit-hairline);
+  color: var(--ink-bright);
+}
+
+/* One focus ring for every control. It sits in :where() so a page rule can refine it: without it,
+   pre[tabindex] would outweigh any single-class focus rule. */
+:where(a, button, summary, pre[tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+/* The background is a graticule: the faint grid, a brighter plus where its lines cross, and the
+   tube's edges falling off to black. */
+.site-background-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    var(--graticule) 0 0 / var(--grid) var(--grid),
+    linear-gradient(90deg, rgb(var(--white-rgb) / 0.014) 1px, transparent 1px) 0 0 / var(--grid)
+    var(--grid),
+    linear-gradient(rgb(var(--white-rgb) / 0.014) 1px, transparent 1px) 0 0 / var(--grid)
+    var(--grid);
+}
+
+.site-background::after {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, transparent 55%, rgb(0 0 0 / 0.38));
+  content: "";
+}
+
+/* Where the pointer rests, the grid's lines turn faintly lit within a 220px circle. Every move is
+   a transform, so the compositor draws it and nothing is painted again while the pointer moves:
+   the lens is a window of fixed size and a fixed mask that SiteBackground moves to the pointer,
+   and its grid moves back by the same amount, so the lines stay on the page's grid. SiteBackground
+   sets data-pointer while a fine pointer is over the page. */
+.site-background-pointer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--duration-decay) ease;
+}
+
+.site-background[data-pointer="on"] .site-background-pointer {
+  opacity: 1;
+  transition-duration: var(--duration-enter);
+}
+
+.site-background-lens {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 440px;
+  height: 440px;
+  overflow: hidden;
+  mask-image: radial-gradient(circle closest-side, #000, transparent);
+  will-change: transform;
+}
+
+.site-background-lens > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background:
+    linear-gradient(90deg, rgb(var(--accent-rgb) / 0.035) 1px, transparent 1px) 0 0 / var(--grid)
+    var(--grid),
+    linear-gradient(rgb(var(--accent-rgb) / 0.035) 1px, transparent 1px) 0 0 / var(--grid)
+    var(--grid);
+  will-change: transform;
+}
+
+/* ─── Beam timing ─── */
+/* Under the pointer or focus a control lights at once; once it is left, its color decays. */
+:where(a, button, summary):where(:hover, :focus-visible) {
+  --duration-beam: var(--duration-control);
+}
+
+/* ─── Beam frame switching on ─── */
+/* A beam frame (the landing's and the 404 page's primary action) switches on like a tube: as the
+   pointer or focus reaches it, it brightens a little, dips once, and settles in 360 ms, eased
+   rather than stepped so it reads as the tube warming and not as a glitch, and a press
+   flashes its fill and thickens its line inward by a pixel, as the beam strikes (the press rules
+   sit beside each frame's hover rule, which they must follow to win). The flicker
+   plays on each arrival, never on its own; under reduced motion it is skipped and the frame
+   lights at once. */
+@media (prefers-reduced-motion: no-preference) {
+  :where(.btn-primary, .page-action-primary):where(:hover, :focus-visible) {
+    animation: beam-switch-on 360ms ease-out;
+  }
+}
+
+@keyframes beam-switch-on {
+  0% {
+    filter: brightness(1.15);
+  }
+
+  40% {
+    filter: brightness(0.94);
+  }
+
+  100% {
+    filter: none;
+  }
+}
+
+/* ─── Beam underline ─── */
+/* Every underlined link carries a lit hairline at rest that brightens to the full lit color with
+   its text under the pointer or focus, lighting in --duration-link and fading in
+   --duration-link-decay, in place, with no sweep. A background layer draws it rather
+   than text-decoration, so a link laid out as a flex box, such as the secondary action, gets the
+   line along its bottom edge, where its border was; box-decoration-break gives a link that wraps a
+   line under each of its lines. The color is a registered property, because a gradient's color
+   cannot transition otherwise. */
+@property --underline {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+:where(
+    .prose a,
+    .section-header > p a,
+    .pinna-point-test,
+    .suite-grid a,
+    .suite-figure-files a,
+    .pinna-bench-notes-row a,
+    .site-footer-meta a,
+    .section-doclink,
+    .btn-secondary
+  ) {
+  --underline: var(--link-underline);
+  --duration-beam: var(--duration-link-decay);
+  background: linear-gradient(var(--underline) 0 0) left bottom / 100% 1px no-repeat;
+  text-decoration: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    --underline var(--duration-beam) ease,
+    color var(--duration-beam) ease;
+}
+
+:where(
+    .prose a,
+    .section-header > p a,
+    .pinna-point-test,
+    .suite-grid a,
+    .suite-figure-files a,
+    .pinna-bench-notes-row a,
+    .site-footer-meta a,
+    .section-doclink,
+    .btn-secondary
+  ):where(:hover, :focus-visible) {
+  --underline: var(--accent);
+  --duration-beam: var(--duration-link);
+}
+
+/* ─── Current glow ─── */
+/* --glow is how lit a current link is, from 0 to 1. It is a registered number, because a value
+   that only feeds color-mix() and calc() cannot transition otherwise. A link that becomes current
+   in place, as a TOC entry does while the page scrolls, transitions it; a link that is current on
+   arrival, as the header and sidebar links are after a navigation swaps them in, plays
+   glow-rise once. Under reduced motion it is set at once. */
+@property --glow {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes glow-rise {
+  from {
+    --glow: 0;
+  }
+}
+
+/* ─── Corner dots ─── */
+/* A panel's frame carries a 3px square at each corner, as a beam frame does, so every frame on the
+   site ends in the same dot. The dots sit at half strength and come up to full under the pointer,
+   lighting in --duration-control and fading in --duration-decay. A panel whose border is its own
+   sets --corner-inset to -1px, so the dots cover the border's corners; one whose border is on its
+   children keeps 0. */
+:where(.code-block, .code-frame, .info-card, .pinna-bench-legend, .pinna-bench-disclaimer) {
+  --corner: var(--accent);
+  --corner-inset: 0;
+  position: relative;
+}
+
+:where(.code-block, .code-frame, .info-card, .pinna-bench-legend, .pinna-bench-disclaimer)::after {
+  position: absolute;
+  inset: var(--corner-inset);
+  background:
+    linear-gradient(var(--corner) 0 0) left top / var(--corner-size) var(--corner-size) no-repeat,
+    linear-gradient(var(--corner) 0 0) right top / var(--corner-size) var(--corner-size) no-repeat,
+    linear-gradient(var(--corner) 0 0) left bottom / var(--corner-size) var(--corner-size) no-repeat,
+    linear-gradient(var(--corner) 0 0) right bottom / var(--corner-size) var(--corner-size)
+    no-repeat;
+  content: "";
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity var(--duration-decay) ease;
+}
+
+:where(
+    .code-block,
+    .code-frame,
+    .info-card,
+    .pinna-bench-legend,
+    .pinna-bench-disclaimer
+  ):hover::after {
+  opacity: 1;
+  transition-duration: var(--duration-control);
+}
+
+/* ─── Lit word ─── */
+/* The lit word is drawn as a vector display's beam draws a line: a hot core, a tight halo in the
+   word's own hue, and a faint bloom, so it reads as a lit stroke rather than a soft blur. Under it
+   runs an edge of the hero graph: a lit line between two filled nodes. Every color comes from
+   currentColor, so the Effect page's green word takes the same light. The hero headline, the
+   Effect page's, and the 404 page's each light one word. */
+.lit-word {
+  --edge-node: max(3px, 0.035em);
+  --edge-line: color-mix(in srgb, currentColor 80%, transparent);
+  --edge-drop: 0.1em;
+  --edge-overhang: 0.08em;
+  position: relative;
+  text-shadow:
+    0 0 1px rgb(var(--white-rgb) / 0.3),
+    0 0 3px color-mix(in srgb, currentColor 40%, transparent),
+    0 0 16px color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* The inline box ends 0.277em under the baseline, the font's descent; the edge's center sits
+   --edge-drop under the baseline. */
+.lit-word::before {
+  position: absolute;
+  right: calc(var(--edge-overhang) * -1);
+  bottom: calc(0.277em - var(--edge-drop) - var(--edge-node) / 2);
+  left: calc(var(--edge-overhang) * -1);
+  height: var(--edge-node);
+  background:
+    linear-gradient(currentColor 0 0) left center / var(--edge-node) var(--edge-node) no-repeat,
+    linear-gradient(currentColor 0 0) right center / var(--edge-node) var(--edge-node) no-repeat,
+    linear-gradient(var(--edge-line) 0 0) center / 100% 1px no-repeat;
+  content: "";
+  filter: drop-shadow(0 0 2px color-mix(in srgb, currentColor 35%, transparent));
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity var(--duration-decay) ease;
+}
+
+/* The edge rests at 0.7 and comes up to full under the pointer, as a panel's corner dots do:
+   lighting in --duration-control, fading in --duration-decay. Nothing else on the word moves. */
+.lit-word:hover::before {
+  opacity: 1;
+  transition-duration: var(--duration-control);
+}
+
+/* The lit color sits in :where(), so a word that names another product, such as Effect in green,
+   keeps its own color whichever stylesheet loads first. */
+:where(.lit-word) {
+  color: var(--accent);
+}
+
+/* Every direct child of body stacks above the fixed .site-background; a class rule on a child
+   overrides it. */
+body > :where(:not(.site-background)) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Components ─── */
+/* The header bar over a code panel keeps its label on the left and its controls on the right. */
+:where(.code-bar) {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--code-border, var(--line));
+  border-bottom: 0;
+  background: var(--code-surface);
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* The label starts at a pad, a hollow 5px square in the label's color, as a trace leaves a pad in
+   the hero graph. */
+:where(.code-bar) > :first-child::before {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  border: 1px solid currentColor;
+  content: "";
+  vertical-align: 0.1em;
+}
+
+/* A code panel's body: the landing's and the docs' set the same type and scroll sideways; each
+   page sets its own inset and surface. */
+:where(.code-block .shiki, .prose pre, .prose .shiki) {
+  overflow-x: auto;
+  border-radius: 0;
+  font-size: 0.72rem;
+  line-height: 1.66;
+}
+
+/* Action labels share their alignment and tracked uppercase type. */
+:where(.action) {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* The secondary action, beside the primary one on the landing, the Effect page, and the 404 page,
+   is a muted link with the beam underline, not a second frame. */
+.btn-secondary {
+  min-height: 44px;
+  color: var(--muted);
+}
+
+/* The resting color above outranks any rule in :where(), so the lit color under the pointer is set
+   here and not in the beam underline's shared hover rule. */
+.btn-secondary:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+
+/* ─── Preview banner (developer-preview strip) ─── */
+.preview-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.preview-banner-label {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 48rem) {
+  .preview-banner {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 16px;
+    text-align: center;
+  }
+}
+
+/* The detail wraps to two lines here, so a phone keeps the label alone. */
+@media (max-width: 40rem) {
+  .preview-banner-detail {
+    display: none;
+  }
+}
+
+/* ─── Brand mark ─── */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--accent);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.mark {
+  position: relative;
+  display: block;
+  width: 36px;
+  height: 36px;
+  background: rgb(var(--bg-dim-rgb) / 0.88);
+  flex-shrink: 0;
+}
+
+.mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The mark is drawn as beams, like the hero graph: thin lime lines with nothing glowing but the
+   cyan tip. */
+.mark-frame {
+  fill: none;
+  stroke: var(--lit-line);
+  stroke-width: 1;
+  transition: stroke var(--duration-control) ease;
+}
+
+.mark-corner {
+  fill: var(--accent);
+}
+
+.mark-beam {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mark-tip {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 3px var(--cyan));
+}
+
+.brand:hover .mark-frame {
+  stroke: var(--lit-line-hover);
+}
+
+/* ─── Shared header row ─── */
+.site-header {
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: var(--shell-width);
+  margin: 0 auto;
+}
+
+/* The brand, and before it on docs pages on phones the menu toggle, on the side the drawer opens
+   from. */
+.nav-start {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* ─── Nav actions ─── */
+.nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-link-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color var(--duration-beam) ease;
+}
+
+.nav-link-action:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+
+.nav-link-action.is-current {
+  color: var(--ink);
+  cursor: default;
+}
+
+.nav-link-action.is-current {
+  --glow: 1;
+}
+
+.nav-link-action.is-current::before {
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 0;
+  background: var(--accent);
+  box-shadow: 0 0 calc(var(--glow) * 12px) rgb(var(--accent-rgb) / calc(var(--glow) * 0.42));
+  content: "";
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-link-action.is-current {
+    animation: glow-rise var(--duration-glow-rise) ease-out;
+  }
+}
+
+/* ─── Shared footer ─── */
+/* The footer's rule is a ground line: the site's footer art stands on it, a tile the site sets in
+   `--footer-art` and sizes in `--footer-art-size`, repeated sideways, none when unset. The
+   footer is filled with --panel down to the page's end, so the ground is solid; over the page's
+   own background and grid the art stood on a line drawn over nothing. */
+.site-footer {
+  margin-top: 16px;
+  border-top: 1px solid var(--lit-hairline);
+  background: var(--panel);
+}
+
+.site-footer::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 28px;
+  background: var(--footer-art, none) 0 100% / var(--footer-art-size, auto 28px) repeat-x;
+  content: "";
+}
+
+.site-footer-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: var(--shell-width);
+  margin: 0 auto;
+  padding: 28px 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+}
+
+.site-footer-mark {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.site-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+}
+
+.site-footer-meta a {
+  color: var(--link);
+}
+
+/* The resting color above outranks any rule in :where(), so the lit color under the pointer is set
+   here and not in the beam underline's shared hover rule. */
+.site-footer-meta a:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+
+@media (24rem < width <= 40rem) {
+  .nav-actions {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .site-footer-shell {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+/* ─── Shell gutter responsive ─── */
+@media (max-width: 64rem) {
+  :root {
+    --shell-gutter: 20px;
+  }
+}
+
+/* ─── Utilities ─── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --shell-gutter: 16px;
+  }
+}

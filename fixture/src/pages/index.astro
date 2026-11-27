@@ -1,0 +1,19 @@
+---
+import InlineCode from "@frondruntime/site-kit/components/InlineCode.astro";
+import SiteFooter from "@frondruntime/site-kit/components/SiteFooter.astro";
+import SiteHeader from "@frondruntime/site-kit/components/SiteHeader.astro";
+import BaseLayout from "@frondruntime/site-kit/layouts/BaseLayout.astro";
+import { docsPath } from "@frondruntime/site-kit/sidebar";
+import Brand from "../components/Brand.astro";
+import { footer, headerLinks, site } from "../site";
+import "../styles/site.css";
+---
+
+<BaseLayout site={site} title={site.name}>
+  <SiteHeader brand={Brand} links={headerLinks} />
+  <main>
+    <p><InlineCode text="The kit's `fixture`." /></p>
+    <a class="action" href={docsPath("start")}>Read the docs</a>
+  </main>
+  <SiteFooter {...footer} />
+</BaseLayout>

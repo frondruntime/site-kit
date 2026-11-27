@@ -1,0 +1,102 @@
+---
+import "../styles/design-system.css";
+import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import SiteBackground from "../components/SiteBackground.astro";
+import VercelAnalytics from "../components/VercelAnalytics.astro";
+import { analyticsEnabled } from "../lib/analytics";
+import { palette } from "../lib/palette";
+import { createJsonLd, ogImageOf } from "../lib/siteMetadata";
+import type { SiteIdentity } from "../types";
+
+/**
+ * The document every page shares: the head's metadata, the font, the background, analytics, and
+ * page transitions. The font needs the site's Astro config to name `plexMono` (`lib/fonts.ts`).
+ */
+interface Props {
+  site: SiteIdentity;
+  /** The full document title. */
+  title: string;
+  description?: string;
+  /**
+   * Indexable pages get a canonical URL, Open Graph, Twitter, and JSON-LD.
+   * On by default; the 404 page turns it off.
+   */
+  indexable?: boolean;
+  ogType?: "website" | "article";
+  bodyClass?: string;
+}
+
+const {
+  site,
+  title,
+  description = site.description,
+  indexable = true,
+  ogType = "website",
+  bodyClass,
+} = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const jsonLdSchema = createJsonLd(site, { title, description, url: canonicalUrl });
+const siteName = site.name;
+const siteAuthor = site.author;
+const ogImage = ogImageOf(site);
+const ogImageAlt = site.ogImageAlt;
+const projectIdentityLinks = [site.organization.profile, site.repositoryUrl];
+// Every page names /llms.txt as the file that describes it (`rel="describedby"`, the llms.txt
+// proposal's relation); a docs page also names its Markdown copy in DocsLayout.
+// `<html>` takes no transition directive: design-system.css keeps the page out of view transitions,
+// and a scoped name from a directive would outrank that rule.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={palette.bg} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={siteAuthor.name} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    {indexable && (
+      <Fragment>
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:alt" content={ogImageAlt} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:creator" content={siteAuthor.twitterHandle} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:image:alt" content={ogImageAlt} />
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLdSchema)} />
+        <link rel="author" href={siteAuthor.url} />
+        {projectIdentityLinks.map((href) => <link rel="me" href={href} />)}
+      </Fragment>
+    )}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="describedby" href="/llms.txt" />
+    <Font cssVariable="--font-plex-mono" preload={[{ weight: "400" }, { weight: "700" }]} />
+    <slot name="head" />
+    <GoogleAnalytics />
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class={bodyClass}>
+    <SiteBackground />
+    {analyticsEnabled && <VercelAnalytics />}
+    <slot />
+  </body>
+</html>

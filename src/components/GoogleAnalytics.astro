@@ -1,0 +1,42 @@
+---
+/**
+ * GA4. Renders only when analytics is enabled and PUBLIC_GA_ID is set. Sites on
+ * subdomains of one domain that take one measurement ID count a visitor once
+ * across them, through the cookie on the parent domain.
+ */
+import { analyticsEnabled } from "../lib/analytics";
+
+const gaId = analyticsEnabled ? import.meta.env.PUBLIC_GA_ID : undefined;
+---
+
+{gaId && (
+  <Fragment>
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+    <script is:inline set:html={`
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function gtag(){dataLayer.push(arguments);}
+
+      function siteKitGaPageview() {
+        const pageLocation = window.location.href;
+        if (window.__siteKitGaLastPageLocation === pageLocation) return;
+
+        window.__siteKitGaLastPageLocation = pageLocation;
+        window.gtag('config', '${gaId}', {
+          anonymize_ip: true,
+          page_location: pageLocation,
+          page_path: window.location.pathname + window.location.search + window.location.hash,
+        });
+      }
+
+      if (!window.__siteKitGaAstroNavigation) {
+        window.__siteKitGaAstroNavigation = true;
+        window.gtag('js', new Date());
+        siteKitGaPageview();
+        document.addEventListener('astro:page-load', siteKitGaPageview);
+      } else {
+        siteKitGaPageview();
+      }
+    `} />
+  </Fragment>
+)}

@@ -1,0 +1,10 @@
+---
+// Text whose `backticked` spans read as code.
+interface Props {
+  readonly text: string;
+}
+
+const { text } = Astro.props;
+---
+
+{text.split("`").map((part, position) => (position % 2 === 1 ? <code>{part}</code> : part))}

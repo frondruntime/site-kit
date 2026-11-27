@@ -1,0 +1,15 @@
+{
+  "groups": [
+    {
+      "label": "Start",
+      "items": [{ "label": "Start", "slug": "start" }]
+    },
+    {
+      "label": "Guide",
+      "items": [
+        { "label": "Callouts and diagrams", "slug": "guide/callouts" },
+        { "label": "Samples", "slug": "guide/samples" }
+      ]
+    }
+  ]
+}

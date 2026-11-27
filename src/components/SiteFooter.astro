@@ -1,0 +1,23 @@
+---
+import type { SiteLink } from "../types";
+
+interface Props {
+  /** The word set large at the footer's left, such as the product's name in capitals. */
+  mark: string;
+  credit: SiteLink;
+  repositoryUrl: string;
+}
+
+const { mark, credit, repositoryUrl } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="site-footer-shell">
+    <span class="site-footer-mark">{mark}</span>
+    <span class="site-footer-meta">
+      <span>© 2026</span>
+      <span>built by <a href={credit.href} target="_blank" rel="noopener noreferrer">{credit.label}</a></span>
+      <a href={repositoryUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+    </span>
+  </div>
+</footer>

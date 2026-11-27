@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from "astro:content";
+import DocsShell from "@frondruntime/site-kit/components/DocsShell.astro";
+import PreviewBanner from "@frondruntime/site-kit/components/PreviewBanner.astro";
+import SiteFooter from "@frondruntime/site-kit/components/SiteFooter.astro";
+import SiteHeader from "@frondruntime/site-kit/components/SiteHeader.astro";
+import BaseLayout from "@frondruntime/site-kit/layouts/BaseLayout.astro";
+import { markdownPath } from "@frondruntime/site-kit/llms";
+import Brand from "../../components/Brand.astro";
+import { footer, headerLinks, sidebar, site } from "../../site";
+import "../../styles/site.css";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("docs");
+  return entries
+    .filter((entry) => entry.data.draft !== true)
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<BaseLayout site={site} title={`${entry.data.title} | ${site.name}`} description={entry.data.description}>
+  <link slot="head" rel="alternate" type="text/markdown" href={markdownPath(entry)} />
+  <PreviewBanner label="Fixture" detail="The kit's own check builds this site." />
+  <SiteHeader brand={Brand} links={headerLinks} current="docs" showMenuToggle />
+  <DocsShell
+    brand={Brand}
+    title={entry.data.title}
+    slug={entry.id}
+    headings={headings}
+    sidebar={sidebar}
+    contextLinks={[{ label: "Samples", href: "/docs/guide/samples" }]}
+  >
+    <Content />
+  </DocsShell>
+  <SiteFooter {...footer} />
+</BaseLayout>

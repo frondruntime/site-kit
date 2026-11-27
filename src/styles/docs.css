@@ -1,0 +1,869 @@
+/* ═══════════════════════════════════════════════════════════
+   PINNA DOCS
+   Docs layout: header, sidebar, content, TOC, prose.
+   Tokens, reset, brand mark live in design-system.css.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Docs-only tokens ─────────────────────────────────────── */
+
+:root {
+  --sidebar-w: 15rem;
+  --toc-w: 14rem;
+  --content-w: 48rem;
+  --page-max: var(--shell-max);
+  --u: 0.25rem;
+}
+
+/* ─── Docs-only reset additions ────────────────────────────── */
+
+html {
+  /* Give headings a little air when jumped to via TOC links. */
+  scroll-padding-top: 1.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.menu-toggle,
+.sidebar-close {
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menu-toggle:is(:hover, :focus-visible),
+.sidebar-close:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.sidebar-close {
+  display: flex;
+  margin-right: -10px;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* ─── Page grid ──────────────────────────────────────────────────── */
+
+.page-grid {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, var(--content-w)) minmax(var(--toc-w), 1fr);
+  grid-template-rows: 1fr;
+  width: var(--shell-width);
+  max-width: var(--page-max);
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────── */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: calc(var(--u) * 3) 0 calc(var(--u) * 8);
+  /* No panel: on the grid, a hairline on its right sets the column apart, as the table of
+     contents' on its left does, and the current page's beam frame is the one box in it. The
+     phone drawer takes a fill below. */
+  border-right: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-bright) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--line-bright);
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hidden by default; shown in the mobile drawer. */
+.sidebar-header {
+  display: none;
+}
+
+.nav-group {
+  margin-bottom: calc(var(--u) * 2);
+}
+
+/* Sidebar and table-of-contents labels: tracked uppercase, like every other label. */
+.nav-group-label,
+.toc-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.nav-group-label {
+  padding: calc(var(--u) * 4) calc(var(--u) * 4) calc(var(--u) * 1);
+}
+
+.nav-link {
+  display: block;
+  margin: 0 calc(var(--u) * 2);
+  padding: calc(var(--u) * 1.5) calc(var(--u) * 2);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    color var(--duration-beam),
+    box-shadow var(--duration-beam);
+}
+
+/* The frames are inset shadows, not borders, so a link's text stays in line with its group's
+   label. Hover draws a hairline; the current page is a beam frame, like the primary action:
+   a lit line with lit corner squares over a faint fill. */
+.nav-link:is(:hover, :focus-visible) {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line-bright);
+}
+
+/* The current page's text glows in its own lime, at full strength once --glow reaches 1. */
+.nav-link.active {
+  --glow: 1;
+  color: var(--accent);
+  background: var(--beam-corners);
+  background-color: var(--lit-fill);
+  box-shadow: inset 0 0 0 1px var(--lit-line-soft);
+  text-shadow: 0 0 calc(var(--glow) * 6px) rgb(var(--accent-rgb) / calc(var(--glow) * 0.35));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-link.active {
+    animation: glow-rise var(--duration-glow-rise) ease-out;
+  }
+}
+
+/* ─── Content ────────────────────────────────────────────────────── */
+
+.content {
+  min-width: 0;
+  padding: calc(var(--u) * 10) calc(var(--u) * 12) calc(var(--u) * 16);
+}
+
+.page-title {
+  margin-bottom: calc(var(--u) * 6);
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--display);
+}
+
+/* ─── Right TOC ──────────────────────────────────────────────────── */
+
+.toc {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: calc(var(--u) * 6) calc(var(--u) * 4);
+  border-left: 1px solid var(--line);
+  scrollbar-width: none;
+}
+
+.toc::-webkit-scrollbar {
+  display: none;
+}
+
+.toc-label {
+  margin-bottom: calc(var(--u) * 2);
+  padding-left: calc(var(--u) * 3);
+}
+
+/* The section in view glows from the marker square into its link: lime text and a soft lime
+   wash from the left edge, both scaled by --glow. A section the reader scrolls past keeps a fading
+   glow for --duration-glow-decay, so the last two sections read as a trail. */
+.toc-link {
+  --glow: 0;
+  display: block;
+  padding: calc(var(--u) * 1) 0 calc(var(--u) * 1) calc(var(--u) * 3);
+  font-size: 0.75rem;
+  color: color-mix(in oklab, var(--accent) calc(var(--glow) * 100%), var(--muted));
+  background: radial-gradient(
+    ellipse 60% 90% at 0 50%,
+    rgb(var(--accent-rgb) / calc(var(--glow) * 0.1)),
+    transparent
+  );
+  transition: color var(--duration-beam);
+}
+
+.toc-link:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+.toc-link[aria-current="true"] {
+  --glow: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toc-link {
+    transition:
+      color var(--duration-beam),
+      --glow var(--duration-glow-decay) var(--ease-decay);
+  }
+
+  .toc-link[aria-current="true"] {
+    transition:
+      color var(--duration-beam),
+      --glow var(--duration-glow-rise) ease-out;
+  }
+}
+
+/* The section in view is marked by one lit square, like the header's current page, centered on its
+   link's first line: the link's top padding, half its 1.6 line height at 0.75rem, less half the
+   square. The scrollspy in DocsLayout.astro sets --toc-marker-y to the link's offsetTop and marks
+   the nav "placed" for the first section, which shows the square where it lands, then "sliding",
+   which moves it to the next section in --duration-graph, so the eye follows it down the list. */
+.toc nav {
+  position: relative;
+}
+
+.toc nav[data-marker]::before {
+  position: absolute;
+  top: calc(var(--u) * 1 + 0.6rem - 2px);
+  left: 0;
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  transform: translateY(var(--toc-marker-y, 0));
+  content: "";
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toc nav[data-marker="sliding"]::before {
+    transition: transform var(--duration-graph) ease;
+  }
+}
+
+.toc-link.toc-link--h3 {
+  padding-left: calc(var(--u) * 6);
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────── */
+
+.pagination {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--u) * 3);
+  margin-top: calc(var(--u) * 10);
+  padding-top: calc(var(--u) * 6);
+  border-top: 1px solid var(--line);
+}
+
+.pagination-prev,
+.pagination-next {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 1);
+  padding: calc(var(--u) * 3) calc(var(--u) * 4);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  transition:
+    border-color var(--duration-beam),
+    background-color var(--duration-beam),
+    color var(--duration-beam);
+}
+
+.pagination-next {
+  align-items: flex-end;
+}
+
+/* Under the pointer a link becomes a beam frame, like the sidebar's current page. */
+.pagination-prev:is(:hover, :focus-visible),
+.pagination-next:is(:hover, :focus-visible) {
+  border-color: var(--lit-line);
+  background: var(--beam-corners);
+  background-color: var(--lit-fill);
+  color: var(--accent);
+}
+
+.pagination-dir {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.pagination-label {
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+
+.pagination-prev:is(:hover, :focus-visible) .pagination-dir,
+.pagination-prev:is(:hover, :focus-visible) .pagination-label,
+.pagination-next:is(:hover, :focus-visible) .pagination-dir,
+.pagination-next:is(:hover, :focus-visible) .pagination-label {
+  color: var(--accent);
+}
+
+/* ─── Prose ──────────────────────────────────────────────────────── */
+
+.prose {
+  color: var(--prose);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.prose :is(h2, h3, h4, h5, h6) {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.prose h2 {
+  position: relative;
+  margin-top: calc(var(--u) * 10);
+  margin-bottom: calc(var(--u) * 3);
+  padding-top: calc(var(--u) * 3);
+  border-top: 1px solid var(--line);
+  font-size: 1.0625rem;
+  color: var(--accent);
+}
+
+/* A section's divider is a trace that leaves a pad, like a branch of the hero graph: a hollow
+   7px square in the lit color at its left end, centered on the 1px line. The page above the
+   pagination ends on the same pad. */
+.prose h2::before,
+.pagination::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--lit-line);
+  background: var(--bg);
+}
+
+.prose h3 {
+  margin-top: calc(var(--u) * 6);
+  margin-bottom: calc(var(--u) * 2);
+  font-size: 0.9375rem;
+  color: var(--cyan);
+}
+
+.prose h4 {
+  margin-top: calc(var(--u) * 4);
+  margin-bottom: calc(var(--u) * 2);
+  font-size: 0.875rem;
+  color: var(--amber);
+}
+
+/* Self-links appended by rehypeDocsChrome; the glyph lives in CSS so the
+   heading text Astro collects for the TOC stays clean. The glyph is --hash, a #
+   drawn as a piece of the hero graph. It carries no underline: the glyph alone
+   marks it as a link, and a line under a 13px drawing read as part of it. */
+.prose .heading-anchor {
+  display: inline-block;
+  margin-left: 0.5em;
+  background: none;
+  color: var(--dim);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--duration-control) ease;
+}
+
+.prose .heading-anchor::before {
+  display: block;
+  width: 13px;
+  height: 13px;
+  background: currentColor;
+  content: "";
+  mask: var(--hash) center / 13px 13px no-repeat;
+}
+
+.prose :is(h2, h3):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.prose .heading-anchor:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+
+.prose p {
+  margin-bottom: calc(var(--u) * 4);
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: calc(var(--u) * 4);
+  padding-left: calc(var(--u) * 5);
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li {
+  margin-bottom: calc(var(--u) * 1);
+}
+
+/* An unordered list's bullet is a leaflet in the lit line color (the --leaflet mask), so a list
+   reads as growth off the section's trace. It is drawn in ::before, because a marker takes no
+   mask. The disc stays and is made transparent rather than removed: Safari drops a list's role
+   when its list-style is none, and a screen reader then stops counting the items. */
+.prose ul > li {
+  position: relative;
+}
+
+.prose ul > li::marker {
+  color: transparent;
+}
+
+.prose ul > li::before {
+  position: absolute;
+  top: 0.62em;
+  left: calc(var(--u) * -3.5);
+  width: 6px;
+  height: 6px;
+  background-color: var(--lit-line);
+  content: "";
+  mask: var(--leaflet) center / contain no-repeat;
+}
+
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Underlined by the beam underline (design-system.css); the text is a step brighter than the prose
+   around it. */
+.prose a {
+  color: var(--link);
+}
+
+/* The resting color above outranks any rule in :where(), so the lit color under the pointer is set
+   here and not in the beam underline's shared hover rule. */
+.prose a:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+
+.prose code:not(pre code) {
+  padding: 0.05em 0.35em;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--accent);
+  font-size: 0.85em;
+  font-family: var(--font-mono);
+  /* `break-word`, not `anywhere`: a path wraps on a phone without shrinking the
+     table columns it sits in. */
+  overflow-wrap: break-word;
+}
+
+/* Docs and landing samples use the engine's code theme (`codeTheme`). Base code type is 0.72rem at 1.66; the
+   landing's showcase samples take 0.78rem. Each layout keeps its own code surface. */
+.prose pre,
+.prose .shiki {
+  position: relative;
+  margin: calc(var(--u) * 4) 0;
+  padding: calc(var(--u) * 4);
+  border: 1px solid var(--lit-panel-line);
+  background: var(--bg-dim);
+}
+
+/* rehypeDocsChrome wraps every block in .code-frame under a header bar, the
+   bar landing's code panels wear: the block's label or language on the left,
+   the copy button on the right, outside the <pre> that scrolls sideways. The
+   frame owns the margin and the border color; an "Avoid" block is red, a
+   "Recommended" one lit. */
+.prose .code-frame {
+  --code-border: var(--lit-panel-line);
+  margin: calc(var(--u) * 4) 0;
+}
+
+.prose .code-frame-wrong {
+  --code-border: rgb(var(--red-rgb) / 0.38);
+  --corner: var(--red);
+}
+
+.prose .code-frame > pre {
+  margin: 0;
+  border-color: var(--code-border);
+}
+
+.code-header {
+  justify-content: space-between;
+  gap: calc(var(--u) * 2);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+  line-height: 1.6;
+}
+
+.code-frame-wrong .code-header {
+  color: var(--red);
+}
+
+.code-frame-recommended .code-header {
+  color: var(--accent);
+}
+
+/* 24px tall for a finger, pulled into the bar's padding so the bar keeps its height. */
+.code-copy {
+  min-height: calc(var(--u) * 6);
+  margin-block: calc(var(--u) * -1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  text-underline-offset: 3px;
+  transition: color var(--duration-beam) ease;
+}
+
+.code-copy:is(:hover, :focus-visible) {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.code-copy[data-state="copied"] {
+  color: var(--accent);
+}
+
+.code-copy[data-state="failed"] {
+  color: var(--red);
+}
+
+/* A copy lights the seam under the header once: a short lit segment runs left to right along it in
+   --duration-sweep, so "Copied" reads as the code taken out of the panel. Above the
+   code's own top border, which the segment covers as it passes. */
+@media (prefers-reduced-motion: no-preference) {
+  .code-header {
+    position: relative;
+  }
+
+  .code-header:has(.code-copy[data-state="copied"])::after {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 1px;
+    background:
+      linear-gradient(90deg, transparent, var(--accent), transparent) 0 0 / 30% 100% no-repeat;
+    opacity: 0;
+    animation: copy-sweep var(--duration-sweep) ease-out;
+    content: "";
+  }
+}
+
+/* With a 30% segment, -43% puts its right edge at the seam's left end and 143% its left edge at the
+   right end. */
+@keyframes copy-sweep {
+  from {
+    background-position: -43% 0;
+    opacity: 1;
+  }
+
+  to {
+    background-position: 143% 0;
+    opacity: 1;
+  }
+}
+
+.prose pre code,
+.prose .shiki code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink);
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* ─── Callout blocks ──────────────────────────────────────────── */
+/* Convention: GitHub alert syntax — > [!NOTE] / [!WARNING] / [!TIP] — which
+   remarkCallouts turns into a label plus .callout-note/-warn/-tip at build
+   time. A blockquote that merely opens bold is ordinary prose and keeps
+   ordinary bold; only a marked callout gets the label treatment. */
+
+.prose blockquote {
+  margin: calc(var(--u) * 5) 0;
+  padding: calc(var(--u) * 4);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--panel-subtle);
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+.prose blockquote p + p {
+  margin-top: calc(var(--u) * 2);
+}
+
+/* The label remarkCallouts prepends. Scoped to .callout-* on purpose: an
+   unmarked blockquote opening with a bold sentence is prose, not a label. */
+.prose blockquote[class*="callout-"] > p:first-child > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Variants ── set by remarkCallouts at build time */
+.prose blockquote.callout-note {
+  border-color: rgb(var(--cyan-rgb) / 0.26);
+}
+.prose blockquote.callout-note > p:first-child > strong:first-child {
+  color: var(--cyan);
+}
+
+.prose blockquote.callout-warn {
+  border-color: rgb(var(--red-rgb) / 0.26);
+}
+.prose blockquote.callout-warn > p:first-child > strong:first-child {
+  color: var(--red);
+}
+
+.prose blockquote.callout-tip {
+  border-color: rgb(var(--accent-rgb) / 0.26);
+}
+.prose blockquote.callout-tip > p:first-child > strong:first-child {
+  color: var(--accent);
+}
+
+/* rehypeDocsChrome wraps every table in .table-frame. The frame owns the
+   margin and border, so the border stays put while a wide table scrolls. */
+.prose .table-frame {
+  margin: calc(var(--u) * 4) 0;
+  border: 1px solid var(--line-bright);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-bright) transparent;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Every cell is ruled on both axes, as on the landing page. */
+.prose :is(th, td) {
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  border-right: 1px solid var(--line-bright);
+  border-bottom: 1px solid var(--line-bright);
+  vertical-align: top;
+  transition: background-color var(--duration-decay) ease;
+}
+
+.prose th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-align: left;
+}
+
+.prose th:last-child,
+.prose td:last-child {
+  border-right: none;
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
+/* The row under the pointer lifts a step, as a landing bench row does. */
+.prose tr:hover > td {
+  background-color: rgb(var(--accent-rgb) / 0.04);
+  transition-duration: var(--duration-control);
+}
+
+.prose hr {
+  margin: calc(var(--u) * 8) 0;
+  border: none;
+  border-top: 1px solid var(--line);
+}
+
+/* ─── Responsive: hide TOC ≤ 78rem ──────────────────────────────── */
+/* The three columns (sidebar, content, table of contents) need 77rem before the shell's
+   gutters, so the table of contents hides at 78rem. Narrower, the content squeezes to
+   about 30ch lines. */
+
+@media (max-width: 78rem) {
+  .page-grid {
+    grid-template-columns: var(--sidebar-w) 1fr;
+  }
+  .toc {
+    display: none;
+  }
+}
+
+/* ─── Responsive: sidebar drawer ≤ 48rem ────────────────────────── */
+
+/* Under 24rem the mark alone carries the brand, so the toggle, the mark, and
+   the three header links still fit. */
+@media (max-width: 24rem) {
+  .site-header .brand-name {
+    display: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  .menu-toggle {
+    display: flex;
+    /* Its icon starts at the shell's edge, where the content does. */
+    margin-left: -14px;
+  }
+
+  .page-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-w);
+    height: 100dvh;
+    z-index: 90;
+    /* Only the open drawer traps the wheel; on desktop a sidebar that fits
+       would otherwise swallow it instead of scrolling the page. */
+    overscroll-behavior: contain;
+    transform: translateX(-100%);
+    /* Hidden, not just off-screen, so closed links leave the tab order. */
+    visibility: hidden;
+    transition:
+      transform var(--duration-drawer) ease,
+      visibility 0s linear var(--duration-drawer);
+    /* Remove top padding — the sticky sidebar-header takes that space. */
+    padding-top: 0;
+    /* Opaque, so the drawer covers the page behind it. */
+    background: var(--panel);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--duration-drawer) ease;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: var(--header-h);
+    padding: 0 calc(var(--u) * 4);
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  /* The grid gives up its own stacking so the fixed drawer and backdrop stack against the page.
+     The backdrop is fixed over the page under the drawer. */
+  .page-grid {
+    z-index: auto;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 89;
+    background: var(--shade);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-drawer) ease;
+  }
+
+  .sidebar-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .content {
+    padding: calc(var(--u) * 6) calc(var(--u) * 4) calc(var(--u) * 12);
+  }
+
+  /* The page behind the open drawer stays put. */
+  html:has(.sidebar.open) {
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar.open,
+  .sidebar-backdrop {
+    transition: none;
+  }
+}
+
+/* ─── Mermaid figures ─────────────────────────────────────────── */
+/* Rendered to inline SVG by remarkMermaid; viewBox drives the aspect ratio. */
+
+.prose .mermaid-diagram {
+  margin: calc(var(--u) * 6) 0;
+}
+
+.prose .mermaid-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
