@@ -2,6 +2,15 @@
 
 One line per change a site must act on: a renamed token, a changed prop, a moved file.
 
+## Unreleased
+
+- New product hue tokens `--pinna`, `--frond`, `--react`, `--effect` and the classes `.hue-pinna`,
+  `.hue-frond`, `.hue-react`, `.hue-effect`. A site replaces its own product-word color rules with
+  them, so a product's name reads in the same color on every site. `--react` and `--effect` are
+  neutral `--ink`; their hues sit in `--react-hue` (cyan) and `--effect-hue` (`#ff7ad9`), off
+  until a site sets `--react: var(--react-hue)`. A site that marked Effect in green or React in cyan
+  moves it to these tokens.
+
 ## 0.1.0
 
 - First version, taken from Pinna's `apps/site` at `de16915`. Against that site:

@@ -51,6 +51,15 @@ that are still literals are listed after the alpha table.
 - **Accents:** `--accent` (the lit color), `--cyan`, `--amber`, `--red`,
   `--green`. The `-rgb` triplets (`--accent-rgb` and the rest)
   exist for tints that take an alpha.
+- **Product hues:** `--pinna` lime and `--frond` green, the family's own
+  products. A site's `--accent` is its own product's hue; a word naming the
+  other product takes `.hue-pinna` or `.hue-frond`, so each reads in one
+  color on every site. The frameworks the family builds on, React and
+  Effect, read in neutral `--ink` through `--react`, `--effect`,
+  `.hue-react`, and `.hue-effect`. Their hues are kept off:
+  `--react-hue` cyan and `--effect-hue` magenta (`#ff7ad9`, a hue no other
+  role or code token holds). A site lights one by setting
+  `--react: var(--react-hue)`.
 - **Layout:** `--shell-max` 1320px, `--shell-gutter` 24px (20px under
   64rem, 16px under 40rem), `--header-h` 4rem, and `--grid`, the
   background grid's 64px pitch. The docs count space in `--u`, 0.25rem.
@@ -91,7 +100,7 @@ These tints are still literals, each at one or two places:
 | The graticule's plus marks | White at 0.04 | Inside a data URI, which cannot read a token |
 | The vignette | Black at 0.38 | |
 | The grid lit under the pointer | Lit lines at 0.035 | |
-| The Effect code panel's corner dots | `--green` at half strength, full under the pointer | |
+| The Effect code panel's corner dots | `--effect` at half strength, full under the pointer | |
 | The corner dots of the benchmark disclaimer and a docs "Avoid" panel | `--red` at half strength, full under the pointer | |
 
 Three surfaces are mixed from the others: `--code-surface`, the code bars'
@@ -367,7 +376,7 @@ only a live state, a failure, or identity.
   it.
 - **The lit word stands on an edge.** One word of a headline is lit
   (`.lit-word`, in `design-system.css`): "hard" in the hero, "Effect" on
-  the Effect page in green, and "read" on the 404 page. Its glow is a
+  the Effect page in `--effect`, and "read" on the 404 page. Its glow is a
   beam's, a white core 1px wide at 0.3, a 3px halo in the word's color at
   40%, and a 16px bloom at 12%, so it reads as a lit stroke and not a soft
   blur. Under it runs an edge of the hero graph: a 1px line in the word's
@@ -378,7 +387,7 @@ only a live state, a failure, or identity.
   nothing else moves. The hero's headline passes clicks through to the
   graph behind it, and the lit word takes the pointer so its edge can
   light. Every color is `currentColor`, and the lit color sits in
-  `:where()`, so the Effect word keeps its green whichever stylesheet
+  `:where()`, so the Effect word keeps its own color whichever stylesheet
   loads first. A misconverged beam, an outlined word, a frame, a reticle,
   a traced branch, and a line drawn on load were rendered and dropped for
   this still edge.

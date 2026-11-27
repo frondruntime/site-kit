@@ -49,6 +49,17 @@
   --red: #f07178;
   --green: #91f29a;
 
+  /* Product hues: the family's own products each have one color, the same on every site. A site's
+     --accent is its own product's hue; a word naming the other product takes that product's token.
+     Frameworks the family builds on (React, Effect) read in neutral --ink. Their hues are kept in
+     --react-hue and --effect-hue: a site lights them with --react: var(--react-hue). */
+  --pinna: #c8f26b;
+  --frond: var(--green);
+  --react: var(--ink);
+  --effect: var(--ink);
+  --react-hue: var(--cyan);
+  --effect-hue: #ff7ad9;
+
   /* Channel triplets for translucent tints: rgb(var(--accent-rgb) / 0.3) */
   --accent-rgb: 200 242 107;
   --cyan-rgb: 60 207 237;
@@ -419,7 +430,7 @@ html {
 /* The lit word is drawn as a vector display's beam draws a line: a hot core, a tight halo in the
    word's own hue, and a faint bloom, so it reads as a lit stroke rather than a soft blur. Under it
    runs an edge of the hero graph: a lit line between two filled nodes. Every color comes from
-   currentColor, so the Effect page's green word takes the same light. The hero headline, the
+   currentColor, so the Effect page's word takes the same light in its own color. The hero headline, the
    Effect page's, and the 404 page's each light one word. */
 .lit-word {
   --edge-node: max(3px, 0.035em);
@@ -459,10 +470,28 @@ html {
   transition-duration: var(--duration-control);
 }
 
-/* The lit color sits in :where(), so a word that names another product, such as Effect in green,
+/* The lit color sits in :where(), so a word that names another product, such as Effect,
    keeps its own color whichever stylesheet loads first. */
 :where(.lit-word) {
   color: var(--accent);
+}
+
+/* A word that names a product, in that product's hue on every site. In :where(), so a site's own
+   rule on the same word still wins. */
+:where(.hue-pinna) {
+  color: var(--pinna);
+}
+
+:where(.hue-frond) {
+  color: var(--frond);
+}
+
+:where(.hue-react) {
+  color: var(--react);
+}
+
+:where(.hue-effect) {
+  color: var(--effect);
 }
 
 /* Every direct child of body stacks above the fixed .site-background; a class rule on a child
