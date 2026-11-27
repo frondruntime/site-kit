@@ -51,6 +51,11 @@ that are still literals are listed after the alpha table.
 - **Accents:** `--accent` (the lit color), `--cyan`, `--amber`, `--red`,
   `--green`. The `-rgb` triplets (`--accent-rgb` and the rest)
   exist for tints that take an alpha.
+- **Product hues:** `--pinna` lime, `--frond` green, `--react` cyan, and
+  `--effect`, which borrows Frond's green until Effect gets a hue of its
+  own. A site's `--accent` is its own product's hue; a word naming another
+  product takes `.hue-pinna`, `.hue-frond`, `.hue-react`, or `.hue-effect`,
+  so each product reads in one color on every site.
 - **Layout:** `--shell-max` 1320px, `--shell-gutter` 24px (20px under
   64rem, 16px under 40rem), `--header-h` 4rem, and `--grid`, the
   background grid's 64px pitch. The docs count space in `--u`, 0.25rem.
